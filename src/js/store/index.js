@@ -15,9 +15,7 @@ const state = {
 };
 
 const actions = {
-  increment: ({ state }) => {
-    state.count++;
-  },
+  increment: ({ state }) => state.count++,
   decrement: ({ state }) => state.count--,
   changeBoth: ({ state }) => {
     state.one++;

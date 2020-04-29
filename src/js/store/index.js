@@ -16,6 +16,10 @@ const state = {
 
 const actions = {
   increment: ({ state }) => state.count++,
+  incrementTwice: ({ state }) => {
+    state.count++;
+    state.count++;
+  },
   decrement: ({ state }) => state.count--,
   changeBoth: ({ state }) => {
     state.one++;
@@ -27,7 +31,8 @@ const actions = {
     await Promise.resolve();
     state.count++;
   },
-  waitFiveSeconds: async ({ state }) => {
+  wait: async ({ state }) => {
+    state.count++;
     await wait();
     state.count--;
   }
@@ -37,5 +42,5 @@ export const store = Unifire({ state, actions });
 
 store.subscribe(({ count }, { prior }) => {
   localStorage.setItem('count', count);
-  console.log('COUNT', count, prior)
+  console.log('COUNT', count, prior);
 });

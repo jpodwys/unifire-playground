@@ -10,7 +10,7 @@ const Header = ({ one, two, count, fire }) => {
 			<h1>Preact App Count: {count}</h1>
 			<nav>
 				<button onClick={() => fire('decrement')}>Decrement</button>
-				<button onClick={() => fire('increment')}>Increment</button>
+				<button onClick={() => fire('incrementTwice')}>Increment</button>
 				<Link activeClassName={style.active} href="/">Home</Link>
 				<Link activeClassName={style.active} href="/profile">Me</Link>
 				<Link activeClassName={style.active} href="/profile/john">John</Link>

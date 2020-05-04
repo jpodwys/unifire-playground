@@ -35,8 +35,6 @@ export const Unifire = (config) => {
   const subscribe = (cb, override) => {
     DEPS.clear();
     cb(getDepProxy(deref(STATE), true), {});
-    // These should both use optional chaining. Support is nearly complete.
-    // https://caniuse.com/#feat=mdn-javascript_operators_optional_chaining
     DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].add(override || cb));
     return () => DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].delete(override || cb));
   }
@@ -58,11 +56,10 @@ export const Unifire = (config) => {
     const action = ACTIONS[actionName];
     let output;
     if (action) {
-      let state = {};
-      let stateTrap = getDepProxy(state);
-      output = ACTIONS[actionName]({ state: stateTrap, fire }, payload);
+      const state = {};
+      output = ACTIONS[actionName]({ state: getDepProxy(state), fire }, payload);
       callUniqueSubscribers(state);
-      if (output && output.then) {
+      if (output && isFunc(output.then)) {
         for (const prop in state) delete state[prop];
         await output;
         callUniqueSubscribers(state);

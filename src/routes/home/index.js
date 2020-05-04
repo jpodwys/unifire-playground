@@ -2,15 +2,14 @@ import { h } from 'preact';
 import style from './style';
 import { Observer } from '../../js/unifire/preact';
 
-const Home = ({ list }) => {
-	console.log('HOME');
-	return (
-		<div class={style.home}>
-			<h1>Home</h1>
-			<p>This is the Home component.</p>
-			{ list.map((item) => <div>{item}</div>) }
+const Home = ({ count, fire }) => (
+	<div class={style.home}>
+		<div class={style.content}>
+			<button onClick={() => fire('decrement')}>-</button>
+			<span>{count}</span>
+			<button onClick={() => fire('increment')}>+</button>
 		</div>
-	);
-}
+	</div>
+);
 
 export default Observer(Home);

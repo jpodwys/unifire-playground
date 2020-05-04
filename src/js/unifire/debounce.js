@@ -1,38 +1,29 @@
-export const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-    const context = this;
-    const later = () => {
-      timeout = null;
-      func.apply(context, args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
 export const Unifire = (config) => {
   const SUBSCRIPTIONS = {};
+  const LISTENERS = [];
   const ACTIONS = {};
   const DEPS = new Set();
+  const BARE_STATE = {};
+  const DELAY = typeof config.delay === 'number' ? config.delay : 10;
+  let PENDING_DELTA = {};
+  let prior;
 
-  // const notify = () =>
-
-  const STATE = new Proxy({}, {
+  const STATE = new Proxy(BARE_STATE, {
     get (state, prop) {
       return isFunc(state[prop]) ? state[prop](STATE) : state[prop]
     },
     set (state, prop, next) {
-      const current = state[prop];
-      if (!isFunc(current) && current !== next) {
-        state[prop] = next;
-        SUBSCRIPTIONS[prop].forEach((sub) => sub(STATE, { prop, prior: current }));
+      if (!isFunc(state[prop]) && state[prop] !== next) {
+        state[prop] = PENDING_DELTA[prop] = next;
+        callUniqueSubscribers(PENDING_DELTA);
       }
       return true;
     }
   });
 
   const isFunc = (val) => val instanceof Function;
+
+  const deref = (obj, target = {}) => Object.assign(target, obj);
 
   const subscribe = (cb, override) => {
     DEPS.clear();
@@ -42,30 +33,51 @@ export const Unifire = (config) => {
         return STATE[prop];
       }
     }), {});
-    // These should both use optional chaining. Support is nearly complete.
-    // https://caniuse.com/#feat=mdn-javascript_operators_optional_chaining
     DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].add(override || cb));
     return () => DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].delete(override || cb));
   }
 
-  const fire = (actionName, payload) => {
-    return ACTIONS[actionName]
-      ? ACTIONS[actionName]({ state: STATE, fire }, payload)
-      : undefined;
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        timeout = null;
+        func.apply(this, args);
+      }, wait);
+    };
   }
 
+  const callUniqueSubscribers = debounce((delta) => {
+    const uniqueSubscribers = new Set();
+    for (const prop in delta) {
+      SUBSCRIPTIONS[prop] && SUBSCRIPTIONS[prop].forEach((sub) => uniqueSubscribers.add(sub));
+    }
+    uniqueSubscribers.forEach((sub) => sub(STATE, { prior }));
+    LISTENERS.forEach((cb) => cb(STATE, prior));
+    PENDING_DELTA = {};
+    prior = deref(STATE);
+  }, DELAY)
+
+  const fire = async (actionName, payload) => {
+    return ACTIONS[actionName] && ACTIONS[actionName]({ state: STATE, fire }, payload);
+  }
+
+  const listen = (cb) => LISTENERS.push(cb);
+
   const register = ({ state = {}, actions = {} }) => {
-    for (const key in state) SUBSCRIPTIONS[key] = new Set();
-    Object.assign(ACTIONS, actions);
-    Object.assign(STATE, state);
-    for (const key in state) {
-      if (isFunc(state[key])) {
-        subscribe(state[key], () => SUBSCRIPTIONS[key].forEach((sub) => sub(STATE)));
+    for (const prop in state) SUBSCRIPTIONS[prop] = new Set();
+    deref(actions, ACTIONS);
+    deref(state, STATE);
+    for (const prop in state) {
+      if (isFunc(state[prop])) {
+        subscribe(state[prop], () => SUBSCRIPTIONS[prop].forEach((sub) => sub(STATE)));
       }
     }
   }
 
+  prior = deref(STATE);
   register(config);
 
-  return { state: STATE, subscribe, fire, register };
+  return { state: STATE, subscribe, listen, fire, register };
 }

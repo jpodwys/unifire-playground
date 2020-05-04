@@ -1,4 +1,4 @@
-.home {
+.todos {
 	text-align: center;
 	padding: 56px 20px;
 	min-height: 100%;
@@ -9,4 +9,14 @@
 
 .content {
 	margin: auto;
+	width: 300px;
+}
+
+.content > ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+.done {
+	text-decoration: line-through;
 }

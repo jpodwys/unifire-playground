@@ -1,36 +1,30 @@
 // import { Unifire } from '../unifire';
-import { Unifire } from '../unifire/batch';
-
-const wait = (delay = 1000) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  });
-};
+// import { Unifire } from '../unifire/set';
+// import { Unifire } from '../unifire/batch';
+import { Unifire } from '../unifire/debounce';
+import { Todo, wait } from './utils';
 
 const state = {
-  one: 1,
-  two: 2,
   count: parseInt(localStorage.getItem('count'), 10) || 0,
-  list: [ 'one', 'two', 'three', 'four' ]
+  todos: JSON.parse(localStorage.getItem('todos')) || []
 };
 
 const actions = {
   increment: ({ state }) => state.count++,
-  incrementTwice: ({ state }) => {
-    state.count++;
-    state.count++;
-  },
+
   decrement: ({ state }) => state.count--,
-  changeBoth: ({ state }) => {
-    state.one++;
-    state.two++;
+
+  addTodo: ({ state }, name) => state.todos = [].concat(state.todos, [ new Todo(name) ]),
+
+  removeTodo: ({ state }, id) => state.todos = state.todos.filter((item) => item.id !== id),
+
+  toggleTodo: ({ state }, id) => {
+    state.todos = state.todos.map((item) => {
+      if (item.id === id) item.done = !item.done;
+      return item;
+    });
   },
-  changeBothAsync: async ({ state }) => {
-    state.count++;
-    state.one++;
-    await Promise.resolve();
-    state.count++;
-  },
+
   wait: async ({ state }) => {
     state.count++;
     await wait();
@@ -40,7 +34,6 @@ const actions = {
 
 export const store = Unifire({ state, actions });
 
-store.subscribe(({ count }, { prior }) => {
-  localStorage.setItem('count', count);
-  console.log('COUNT', count, prior);
-});
+store.subscribe(({ count }) => localStorage.setItem('count', count));
+store.subscribe(({ todos }) => localStorage.setItem('todos', JSON.stringify(todos)));
+store.listen((state, prior) => console.log(state, prior));

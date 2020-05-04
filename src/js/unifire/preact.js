@@ -9,13 +9,10 @@ export function Observer (component) {
   function Wrapper(_, { store }) {
     let unsubscribe;
     this.componentDidMount = () => {
-      unsubscribe = store.subscribe(component, () => {
-        console.log('OBSERVER');
-        this.setState({});
-      });
+      unsubscribe = store.subscribe(component, () => this.setState({}));
     };
     this.componentWillUnmount = () => unsubscribe();
-    this.render = () => h(component, { ...store.state, fire: store.fire });
+    this.render = (props) => h(component, { ...props, ...store.state, fire: store.fire });
   }
   return (Wrapper.prototype = new Component()).constructor = Wrapper;
 }

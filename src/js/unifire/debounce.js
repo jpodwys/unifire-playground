@@ -1,10 +1,8 @@
-export const Unifire = (config) => {
+export default function Unifire (config) {
   const SUBSCRIPTIONS = {};
-  const LISTENERS = [];
   const ACTIONS = {};
   const DEPS = new Set();
   const BARE_STATE = {};
-  const DELAY = typeof config.delay === 'number' ? config.delay : 10;
   let PENDING_DELTA = {};
   let prior;
 
@@ -15,7 +13,7 @@ export const Unifire = (config) => {
     set (state, prop, next) {
       if (!isFunc(state[prop]) && state[prop] !== next) {
         state[prop] = PENDING_DELTA[prop] = next;
-        callUniqueSubscribers(PENDING_DELTA);
+        callUniqueSubscribers();
       }
       return true;
     }
@@ -37,33 +35,27 @@ export const Unifire = (config) => {
     return () => DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].delete(override || cb));
   }
 
-  const debounce = (func, wait) => {
+  const debounce = (func) => {
     let timeout;
     return (...args) => {
       clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        timeout = null;
-        func.apply(this, args);
-      }, wait);
+      timeout = setTimeout(() => func.apply({}, args), 0);
     };
   }
 
-  const callUniqueSubscribers = debounce((delta) => {
+  const callUniqueSubscribers = debounce(() => {
     const uniqueSubscribers = new Set();
-    for (const prop in delta) {
+    for (const prop in PENDING_DELTA) {
       SUBSCRIPTIONS[prop] && SUBSCRIPTIONS[prop].forEach((sub) => uniqueSubscribers.add(sub));
     }
-    uniqueSubscribers.forEach((sub) => sub(STATE, { prior }));
-    LISTENERS.forEach((cb) => cb(STATE, prior));
+    uniqueSubscribers.forEach((sub) => sub(STATE, prior));
     PENDING_DELTA = {};
     prior = deref(STATE);
-  }, DELAY)
+  })
 
   const fire = async (actionName, payload) => {
     return ACTIONS[actionName] && ACTIONS[actionName]({ state: STATE, fire }, payload);
   }
-
-  const listen = (cb) => LISTENERS.push(cb);
 
   const register = ({ state = {}, actions = {} }) => {
     for (const prop in state) SUBSCRIPTIONS[prop] = new Set();
@@ -74,10 +66,10 @@ export const Unifire = (config) => {
         subscribe(state[prop], () => SUBSCRIPTIONS[prop].forEach((sub) => sub(STATE)));
       }
     }
+    prior = deref(STATE);
   }
 
-  prior = deref(STATE);
   register(config);
 
-  return { state: STATE, subscribe, listen, fire, register };
+  return { state: STATE, fire, subscribe, register };
 }

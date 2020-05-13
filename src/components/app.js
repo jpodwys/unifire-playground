@@ -22,7 +22,7 @@ export default class App extends Component {
 
 	render() {
 		return (
-			<Provider store={store}>
+			<Provider value={store}>
 				<div id="app">
 					<Header />
 					<Router onChange={this.handleRoute}>

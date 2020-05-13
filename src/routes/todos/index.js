@@ -1,6 +1,7 @@
 import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import { useUnifire } from '../../js/unifire/preact';
 import style from './style';
-import { Observer } from '../../js/unifire/preact';
 
 const getInputText = () => {
 	const input = document.getElementById('todosInput');
@@ -14,23 +15,29 @@ const onSubmit = (e, fire) => {
 	fire('addTodo', getInputText());
 }
 
-const Todos = ({ todos, fire }) => (
-	<div class={style.todos}>
-		<div class={style.content}>
-			<form onSubmit={(e) => onSubmit(e, fire)}>
-				<input id="todosInput" />
-			</form>
-			<ul>
-				{ todos.map((item) => (
-					<li>
-						<button onClick={() => fire('toggleTodo', item.id)}>Toggle</button>
-							<span class={item.done ? style.done : ''}>{item.name}</span>
-						<button onClick={() => fire('removeTodo', item.id)}>X</button>
-					</li>
-				)) }
-			</ul>
+const Todos = () => {
+	const [ otherCount, setOtherCount ] = useState(10);
+	return useUnifire(({ todos, fire }) => (
+		<div class={style.todos}>
+			<div class={style.content}>
+				{otherCount}
+				<button onClick={() => setOtherCount(otherCount + 1)}>Inc</button>
+				<form onSubmit={(e) => onSubmit(e, fire)}>
+					<input id="todosInput" />
+				</form>
+				<ul>
+					{ todos.map((item) => (
+						<li>
+							<button onClick={() => fire('toggleTodo', item.id)}>Toggle</button>
+								<span class={item.done ? style.done : ''}>{item.name}</span>
+							<button onClick={() => fire('removeTodo', item.id)}>X</button>
+						</li>
+					)) }
+				</ul>
+			</div>
 		</div>
-	</div>
-);
+	));
+}
 
-export default Observer(Todos);
+export default Todos;
+// export default Observer(Todos);

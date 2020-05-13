@@ -1,7 +1,7 @@
 // import { Unifire } from '../unifire';
 // import { Unifire } from '../unifire/set';
 // import { Unifire } from '../unifire/batch';
-import { Unifire } from '../unifire/debounce';
+import Unifire from '../unifire/debounce';
 import { Todo, wait } from './utils';
 
 const state = {
@@ -36,4 +36,4 @@ export const store = Unifire({ state, actions });
 
 store.subscribe(({ count }) => localStorage.setItem('count', count));
 store.subscribe(({ todos }) => localStorage.setItem('todos', JSON.stringify(todos)));
-store.listen((state, prior) => console.log(state, prior));
+// store.listen((state, prior) => console.log(state, prior));

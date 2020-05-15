@@ -5,6 +5,7 @@ export default function Unifire (config) {
   let DEPS = new Set();
   let PENDING_DELTA = {};
   let prior;
+  let timeout;
 
   const STATE = new Proxy(BARE_STATE, {
     get (state, prop) {
@@ -24,7 +25,8 @@ export default function Unifire (config) {
   const deref = (obj, target = {}) => Object.assign(target, obj);
 
   const subscribe = (cb, override) => {
-    if (Array.isArray(cb)) {
+    // This is slightly smaller than Array.isArray
+    if (cb instanceof Array) {
       DEPS = new Set(cb);
     } else {
       DEPS.clear();
@@ -39,25 +41,21 @@ export default function Unifire (config) {
     return () => DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].delete(override || cb));
   }
 
-  const debounce = (func) => {
-    let timeout;
-    return () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(func);
-    };
+  const callUniqueSubscribers = () => {
+    // Inlining the debounce function is smaller
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const uniqueSubscribers = new Set();
+      for (const prop in PENDING_DELTA) {
+        SUBSCRIPTIONS[prop] && SUBSCRIPTIONS[prop].forEach((sub) => uniqueSubscribers.add(sub));
+      }
+      uniqueSubscribers.forEach((sub) => sub(STATE, prior));
+      PENDING_DELTA = {};
+      prior = deref(STATE);
+    });
   }
 
-  const callUniqueSubscribers = debounce(() => {
-    const uniqueSubscribers = new Set();
-    for (const prop in PENDING_DELTA) {
-      SUBSCRIPTIONS[prop] && SUBSCRIPTIONS[prop].forEach((sub) => uniqueSubscribers.add(sub));
-    }
-    uniqueSubscribers.forEach((sub) => sub(STATE, prior));
-    PENDING_DELTA = {};
-    prior = deref(STATE);
-  })
-
-  const fire = async (actionName, payload) => {
+  const fire = (actionName, payload) => {
     return ACTIONS[actionName] && ACTIONS[actionName]({ state: STATE, fire }, payload);
   }
 
@@ -65,12 +63,12 @@ export default function Unifire (config) {
     for (const prop in state) SUBSCRIPTIONS[prop] = new Set();
     deref(actions, ACTIONS);
     deref(state, STATE);
+    prior = deref(STATE);
     for (const prop in state) {
       if (isFunc(state[prop])) {
-        subscribe(state[prop], () => SUBSCRIPTIONS[prop].forEach((sub) => sub(STATE)));
+        subscribe(state[prop], () => SUBSCRIPTIONS[prop].forEach((sub) => sub(STATE, prior)));
       }
     }
-    prior = deref(STATE);
   }
 
   register(config);

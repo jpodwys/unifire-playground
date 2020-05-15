@@ -9,6 +9,8 @@ import Header from './header';
 // Code-splitting is automated for routes
 import Home from '../routes/home';
 import Todos from '../routes/todos';
+import UseStore from '../routes/use-store';
+import UseEffect from '../routes/use-effect';
 
 export default class App extends Component {
 
@@ -28,6 +30,8 @@ export default class App extends Component {
 					<Router onChange={this.handleRoute}>
 						<Home path="/" />
 						<Todos path="/todos" />
+						<UseStore path="/use-store" />
+						<UseEffect path="/use-effect" />
 					</Router>
 				</div>
 			</Provider>

@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
-import { useUnifire } from '../../js/unifire/preact';
+import { useObserver } from '../../js/unifire/preact';
 import style from './style';
 
 const getInputText = () => {
@@ -17,7 +17,7 @@ const onSubmit = (e, fire) => {
 
 const Todos = () => {
 	const [ otherCount, setOtherCount ] = useState(10);
-	return useUnifire(({ todos, fire }) => (
+	return useObserver(({ todos, fire }) => (
 		<div class={style.todos}>
 			<div class={style.content}>
 				{otherCount}
@@ -40,4 +40,3 @@ const Todos = () => {
 }
 
 export default Todos;
-// export default Observer(Todos);

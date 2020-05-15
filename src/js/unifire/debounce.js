@@ -1,8 +1,8 @@
 export default function Unifire (config) {
   const SUBSCRIPTIONS = {};
   const ACTIONS = {};
-  const DEPS = new Set();
   const BARE_STATE = {};
+  let DEPS = new Set();
   let PENDING_DELTA = {};
   let prior;
 
@@ -24,22 +24,26 @@ export default function Unifire (config) {
   const deref = (obj, target = {}) => Object.assign(target, obj);
 
   const subscribe = (cb, override) => {
-    DEPS.clear();
-    cb(new Proxy({}, {
-      get (_, prop) {
-        DEPS.add(prop);
-        return STATE[prop];
-      }
-    }), {});
+    if (Array.isArray(cb)) {
+      DEPS = new Set(cb);
+    } else {
+      DEPS.clear();
+      cb(new Proxy({}, {
+        get (_, prop) {
+          DEPS.add(prop);
+          return STATE[prop];
+        }
+      }), {});
+    }
     DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].add(override || cb));
     return () => DEPS.forEach((dep) => SUBSCRIPTIONS[dep] && SUBSCRIPTIONS[dep].delete(override || cb));
   }
 
   const debounce = (func) => {
     let timeout;
-    return (...args) => {
+    return () => {
       clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply({}, args), 0);
+      timeout = setTimeout(func);
     };
   }
 

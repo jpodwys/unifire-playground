@@ -1,6 +1,6 @@
 import { h } from 'preact';
-import style from './style';
 import { Observer } from '../../js/unifire/preact';
+import style from './style';
 
 const Home = ({ count, fire }) => (
 	<div class={style.home}>

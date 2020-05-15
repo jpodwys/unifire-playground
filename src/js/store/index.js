@@ -14,7 +14,7 @@ const actions = {
 
   decrement: ({ state }) => state.count--,
 
-  addTodo: ({ state }, name) => state.todos = [].concat(state.todos, [ new Todo(name) ]),
+  addTodo: ({ state }, name) => state.todos = [ ...state.todos, ...[ new Todo(name) ] ],
 
   removeTodo: ({ state }, id) => state.todos = state.todos.filter((item) => item.id !== id),
 

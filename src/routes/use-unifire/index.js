@@ -1,10 +1,10 @@
 import { h } from 'preact';
-import { useStore } from '../../js/unifire/preact';
+import { useUnifire } from '../../js/unifire/preact';
 import { store } from '../../js/store';
 import style from './style';
 
-const UseStore = () => {
-	const [ { count }, fire ] = useStore(store, [ 'count' ]);
+const UseUnifire = () => {
+	const [ { count }, fire ] = useUnifire(store, [ 'count' ]);
 	return (
 		<div class={style.home}>
 			<div class={style.content}>
@@ -16,4 +16,4 @@ const UseStore = () => {
 	);
 }
 
-export default UseStore;
+export default UseUnifire;

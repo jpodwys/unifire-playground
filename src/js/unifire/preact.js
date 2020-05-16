@@ -31,6 +31,7 @@ function useBase (store, subscriber) {
     store = useContext(StoreContext); // eslint-disable-line react-hooks/rules-of-hooks
   }
   const render = useState();
+  if (typeof subscriber === 'string') subscriber = [ subscriber ];
   useIsomorphicLayoutEffect(() => store.subscribe(subscriber, () => render[1]({})), []);
   return [ store, subscriber ];
 }
@@ -40,7 +41,12 @@ export function useObserver (...args) {
   return render({ ...store.state, fire: store.fire });
 }
 
-export function useStore (...args) {
+export function useUnifire (...args) {
   const [ store ] = useBase(...args);
   return [ store.state, store.fire ];
+}
+
+export function useUnifireState (...args) {
+  const [ store, prop ] = useBase(...args);
+  return [ store.state[prop], (val) => store.state[prop] = val ];
 }

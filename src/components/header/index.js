@@ -8,7 +8,8 @@ const Header = () => (
 		<nav>
 			<Link activeClassName={style.active} href="/">Counter</Link>
 			<Link activeClassName={style.active} href="/todos">Todos</Link>
-			<Link activeClassName={style.active} href="/use-store">Use Store</Link>
+			<Link activeClassName={style.active} href="/use-unifire">Use Unifire</Link>
+			<Link activeClassName={style.active} href="/use-unifire-state">Use Unifire State</Link>
 			<Link activeClassName={style.active} href="/use-effect">Use Effect</Link>
 		</nav>
 	</header>

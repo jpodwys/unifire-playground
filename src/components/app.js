@@ -8,6 +8,7 @@ import Header from './header';
 
 // Code-splitting is automated for routes
 import Home from '../routes/home';
+import ObserverClass from '../routes/observer-class';
 import Todos from '../routes/todos';
 import UseUnifire from '../routes/use-unifire';
 import UseUnifireState from '../routes/use-unifire-state';
@@ -30,6 +31,7 @@ export default class App extends Component {
 					<Header />
 					<Router onChange={this.handleRoute}>
 						<Home path="/" />
+						<ObserverClass path="observer-class" />
 						<Todos path="/todos" />
 						<UseUnifire path="/use-unifire" />
 						<UseUnifireState path="/use-unifire-state" />

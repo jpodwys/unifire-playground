@@ -7,6 +7,7 @@ const Header = () => (
 		<h1>Unifire Playground</h1>
 		<nav>
 			<Link activeClassName={style.active} href="/">Counter</Link>
+			<Link activeClassName={style.active} href="/observer-class">Class</Link>
 			<Link activeClassName={style.active} href="/todos">Todos</Link>
 			<Link activeClassName={style.active} href="/use-unifire">Use Unifire</Link>
 			<Link activeClassName={style.active} href="/use-unifire-state">Use Unifire State</Link>

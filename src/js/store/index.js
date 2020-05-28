@@ -2,6 +2,7 @@
 // import { Unifire } from '../unifire/set';
 // import { Unifire } from '../unifire/batch';
 import Unifire from '../unifire/debounce';
+import { memoize } from '../unifire/memoize';
 import { Todo, wait } from './utils';
 
 // export const store = Unifire({
@@ -10,7 +11,15 @@ import { Todo, wait } from './utils';
 
 const state = {
   count: parseInt(localStorage.getItem('count'), 10) || 0,
-  todos: JSON.parse(localStorage.getItem('todos')) || []
+  todos: JSON.parse(localStorage.getItem('todos')) || [],
+  dub: ({ count }) => {
+    console.log('dub');
+    return count * 2;
+  },
+  quad: memoize(({ count }) => {
+    console.log('quad');
+    return count * 4;
+  })
 };
 
 const actions = {

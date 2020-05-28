@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
-import { Observer } from '../../js/unifire/preact';
+import { ob } from '../../js/unifire/preact';
 import style from './style';
 
 const Todos = ({ todos, fire }) => {
@@ -11,6 +11,7 @@ const Todos = ({ todos, fire }) => {
 		fire('addTodo', name);
 		setName('');
 	}
+	console.log('RENDERING AGAIN');
 
 	return (
 		<div class={style.todos}>
@@ -33,4 +34,4 @@ const Todos = ({ todos, fire }) => {
 	);
 }
 
-export default Observer(Todos);
+export default ob(Todos);

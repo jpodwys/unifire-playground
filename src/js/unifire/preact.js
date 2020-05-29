@@ -1,6 +1,6 @@
 import { h, Component, createContext } from 'preact';
 import { useContext, useLayoutEffect, useEffect, useState } from 'preact/hooks';
-import { forwardRef } from 'preact/compat';
+import { memo, forwardRef } from 'preact/compat';
 import { reflect } from './reflect';
 
 const StoreContext = createContext();
@@ -35,14 +35,14 @@ export function Observer (...args) {
 
 export const ob = (...args) => {
   const [ store, component ] = resolveArgs(...args);
-  return (props) => {
+  return memo((props) => {
     const render = useState();
     const subscriber = component.prototype.render ? (new component()).render : component;
     const [ deps, output ] = reflect({ ...props, ...store.state, fire: store.fire }, subscriber);
     const unsubscribe = store.subscribe(Array.from(deps), () => render[1]({}));
     useEffect(() => () => unsubscribe(), [ unsubscribe ]);
     return output;
-  }
+  });
 }
 
 // export const obb = (...args) => {

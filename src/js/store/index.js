@@ -1,8 +1,5 @@
-// import { Unifire } from '../unifire';
-// import { Unifire } from '../unifire/set';
-// import { Unifire } from '../unifire/batch';
-import Unifire from '../unifire/debounce';
-import { memoize } from '../unifire/memoize';
+import Unifire from 'unifire';
+import { memoize } from 'unifire/utils';
 import { Todo, wait } from './utils';
 
 // export const store = Unifire({

@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { ob } from '../../js/unifire/preact';
+import { Observer } from '@unifire/preact';
 import style from './style';
 
 const Home = ({ count, fire }) => {
@@ -13,4 +13,4 @@ const Home = ({ count, fire }) => {
 	</div>
 };
 
-export default ob(Home);
+export default Observer(Home);

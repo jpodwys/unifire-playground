@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useUnifire } from '../../js/unifire/preact';
+import { useUnifire } from '@unifire/preact';
 import { store } from '../../js/store';
 import style from './style';
 

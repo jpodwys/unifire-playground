@@ -1,10 +1,11 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
-import { ob } from '../../js/unifire/preact';
+import { useUnifire } from '@unifire/preact';
 import style from './style';
 
-const Todos = ({ todos, fire }) => {
+const Todos = () => {
 	const [ name, setName ] = useState('');
+	const [ { todos }, fire ] = useUnifire([ 'todos' ]);
 
 	const onSubmit = (e) => {
 		e.preventDefault();
@@ -34,4 +35,4 @@ const Todos = ({ todos, fire }) => {
 	);
 }
 
-export default ob(Todos);
+export default Todos;

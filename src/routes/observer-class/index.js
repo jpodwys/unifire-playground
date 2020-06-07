@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { ob } from '../../js/unifire/preact';
+import { Observer } from '@unifire/preact';
 import style from './style';
 
 class ObserverClass extends Component {
@@ -18,4 +18,4 @@ class ObserverClass extends Component {
 	}
 }
 
-export default ob(ObserverClass);
+export default Observer(ObserverClass);

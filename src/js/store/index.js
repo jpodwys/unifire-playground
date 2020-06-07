@@ -2,10 +2,6 @@ import Unifire from 'unifire';
 import { memoize } from 'unifire/utils';
 import { Todo, wait } from './utils';
 
-// export const store = Unifire({
-//   state: { count: 0 }
-// });
-
 const state = {
   count: parseInt(localStorage.getItem('count'), 10) || 0,
   todos: JSON.parse(localStorage.getItem('todos')) || [],

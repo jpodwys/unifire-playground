@@ -3,14 +3,14 @@ import { Observer } from '@unifire/preact';
 import style from './style';
 
 class ObserverClass extends Component {
-	render ({ count, fire }) {
+	render ({ state, fire }) {
 		console.log('RENDERING CLASS');
-		if (!Number.isInteger(count)) return; // This line to to satisfy react/prefer-stateless-function
+		if (!Number.isInteger(state.count)) return; // This line to to satisfy react/prefer-stateless-function
 		return (
 			<div class={style.home}>
 				<div class={style.content}>
 					<button onClick={() => fire('decrement')}>-</button>
-					<span>{count}</span>
+					<span>{state.count}</span>
 					<button onClick={() => fire('increment')}>+</button>
 				</div>
 			</div>

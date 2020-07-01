@@ -5,7 +5,7 @@ import style from './style';
 
 const Todos = () => {
 	const [ name, setName ] = useState('');
-	const [ { todos }, fire ] = useUnifire([ 'todos' ]);
+	const [ state, fire ] = useUnifire([ 'todos' ]);
 
 	const onSubmit = (e) => {
 		e.preventDefault();
@@ -22,7 +22,7 @@ const Todos = () => {
 				</form>
 
 				<ul>
-					{ todos.map((item) => (
+					{ state.todos.map((item) => (
 						<li>
 							<button onClick={() => fire('toggleTodo', item.id)}>Toggle</button>
 							<span class={item.done ? style.done : ''}>{item.name}</span>

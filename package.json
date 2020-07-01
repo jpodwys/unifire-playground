@@ -30,7 +30,7 @@
     "sirv-cli": "^0.4.5"
   },
   "dependencies": {
-    "@unifire/preact": "^0.4.2",
+    "@unifire/preact": "^0.4.9",
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
